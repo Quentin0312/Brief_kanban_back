@@ -1,0 +1,5 @@
+Dans pyvenv.cfg ajouter
+[env]
+user =
+password =
+database =
