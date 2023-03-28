@@ -1,11 +1,25 @@
 import hug
 from database.database import session
 from database.entity import Colonnes
+from sqlalchemy import desc
+
+# @hug.post('/')
+# def createColumn(body):
+#     columnTitle = body['columnTitle']
+#     return columnTitle + " post"
 
 @hug.post('/')
-def createColumn(body):
-    columnTitle = body['columnTitle']
-    return columnTitle + " post"
+def createColumn():
+    nouvelleColonne = Colonnes(titreColonne = "Nouvelle colonne")  # Valeur titreColonne peut etre transmis dans la requete entrante
+    # Pour la pos, d'abord recup la dernière pos puis +1 (eviter requete=> info doit être présent dans la requpete entrante)
+    session.add(nouvelleColonne)
+    session.commit()
+
+    # Recup de l'id
+    id = session.query(Colonnes).order_by(desc(Colonnes.id)).with_entities(Colonnes.id).first()
+
+    return id[0]
+
 
 @hug.put('/')
 def modifyColumn(body):
