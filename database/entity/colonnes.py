@@ -6,4 +6,5 @@ class Colonnes(Base):
 
     id = Column(Integer, primary_key=True)
     titreColonne = Column(String)
+    pos = Column(Integer) # Ajouter contrainte d'unicité
 
