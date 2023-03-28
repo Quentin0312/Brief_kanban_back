@@ -7,3 +7,4 @@ class Taches(Base):
     id = Column(Integer, primary_key=True)
     titreTaches = Column(String)
     id_colonne = Column(Integer, ForeignKey('colonnes.id'))
+    pos = Column(Integer) #Ajouter contrainte d'unicité
