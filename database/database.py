@@ -7,7 +7,7 @@ try:
 except:
     from .utils import getConfig
 
+# Utilisation des infos de connexion stocké dans le venv pour créer la session
 engine = create_engine('postgresql://' + getConfig('user') + ':' + getConfig('password') + '@localhost/' + getConfig('database'), echo=True)
-# engine = create_engine('postgresql://postgres:azerty@localhost/briefKanban', echo=True)
 session = sessionmaker(bind=engine)
 session = session() # pq ?
