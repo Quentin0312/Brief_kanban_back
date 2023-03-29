@@ -3,6 +3,12 @@ from database.database import session
 from database.entity import Colonnes
 from sqlalchemy import desc
 
+# Récup liste des colonnes
+@hug.get('/')
+def getColumn():
+    queryColonne = session.query(Colonnes).order_by(Colonnes.pos).with_entities(Colonnes.id, Colonnes.titreColonne)
+    return queryColonne
+
 # Enregistrement d'une nouvelle colonne
 @hug.post('/')
 def createColumn(body):
@@ -18,11 +24,18 @@ def createColumn(body):
 
     return id[0]
 
-# Récup liste des colonnes
-@hug.get('/')
-def getColumn():
-    queryColonne = session.query(Colonnes).order_by(Colonnes.pos).with_entities(Colonnes.id, Colonnes.titreColonne)
-    return queryColonne
+# Modifier le titre de la colonne
+@hug.put('/{idColonne}')
+def modifyTitle(body, idColonne):
+    print('================>ici')
+    # Datas
+    print(idColonne)
+    nvTitre = body['newTitle']
+
+    session.query(Colonnes).filter(Colonnes.id == idColonne).update({ Colonnes.titreColonne : nvTitre })
+    session.commit()
+
+    return 'ok'
 
 # Enregistrer les nvle pos des colonnes
 @hug.put('/reorder')
