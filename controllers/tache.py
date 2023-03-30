@@ -10,6 +10,15 @@ def getTask():
 
     return queryTask
 
+# Modif titre d'une tache
+@hug.put('/{idTache}')
+def modifyTaskTitle(body, idTache):
+    print("============body>",body)
+    newTitle = body['newTitle']
+    session.query(Taches).filter(Taches.id == int(idTache)).update({ Taches.titreTaches : newTitle })
+    session.commit()
+    return 'ok'
+
 # Ajouter une tache
 @hug.post('/')
 def addTask(body):
