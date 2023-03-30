@@ -1,6 +1,7 @@
 import hug
 from database.database import session
 from database.entity import Taches
+from sqlalchemy import desc
 
 # Récup la liste des taches
 @hug.get('/')
@@ -8,6 +9,25 @@ def getTask():
     queryTask = session.query(Taches).order_by(Taches.pos).with_entities(Taches.id_colonne, Taches.titreTaches, Taches.pos, Taches.id)
 
     return queryTask
+
+# Ajouter une tache
+@hug.post('/')
+def addTask(body):
+    # Datas
+    titreTache = body['titreTache']
+    idColonne = int(body['idColonne'])
+    pos = int(body['pos'])
+
+    nouvelleTache = Taches(titreTaches = titreTache, id_colonne = idColonne, pos = pos)
+    session.add(nouvelleTache)
+    session.commit()
+
+    derId = session.query(Taches).order_by(desc(Taches.id)).with_entities(Taches.id).first()
+    derId = derId[0]
+
+    print("========derId===========>",derId)
+
+    return {"derId" : derId, 'titreTache' : titreTache, 'idColonne' : idColonne, 'pos' : pos}
 
 # Modifie id_colonne et pos
 @hug.put('/reorder')
