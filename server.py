@@ -7,5 +7,5 @@ api.http.add_middleware(CORSMiddleware(api, allow_origins=['*'])) # allow_origin
 
 baseUrl = "/api"
 
-api.extend(colonne, baseUrl + '/colonne')
-api.extend(tache, baseUrl + '/tache')
+api.extend(colonne, baseUrl + '/colonnes')
+api.extend(tache, baseUrl + '/taches')
