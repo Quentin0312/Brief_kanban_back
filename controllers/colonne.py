@@ -12,10 +12,12 @@ def getColumn():
 # Enregistrement d'une nouvelle colonne
 @hug.post('/')
 def createColumn(body):
+    # Datas
     nvleColonne = body['titreColonne']
     pos = int(body['pos'])
-    nouvelleColonne = Colonnes(titreColonne = nvleColonne, pos = pos)  # Valeur titreColonne peut etre transmis dans la requete entrante
-    # Pour la pos, d'abord recup la dernière pos puis +1 (eviter requete=> info doit être présent dans la requete entrante)
+
+    # Requete SQL
+    nouvelleColonne = Colonnes(titreColonne = nvleColonne, pos = pos)
     session.add(nouvelleColonne)
     session.commit()
 
@@ -27,9 +29,7 @@ def createColumn(body):
 # Modifier le titre de la colonne
 @hug.put('/{idColonne}')
 def modifyTitle(body, idColonne):
-    print('================>ici')
     # Datas
-    print(idColonne)
     nvTitre = body['newTitle']
 
     session.query(Colonnes).filter(Colonnes.id == idColonne).update({ Colonnes.titreColonne : nvTitre })
@@ -44,9 +44,10 @@ def reorderColumn(body):
     idColonne = int(body['idColonne'])
     nvlePos = int(body['nvlePos'])
 
-    # Vérif si nvle pos diff de l'ancienne
-    # Pos départ à récup dans BDD, possibilité depuis le front envoyer requete que si différence
+    # Vérif si nouvelle pos diff de l'ancienne
     anciennePos = session.query(Colonnes).filter(Colonnes.id == idColonne).with_entities(Colonnes.pos).scalar() 
+    # Pos départ récup depuis BDD, possibilité envoyer depuis le front
+    # Aussi possible envoyer requete depuis le front qui si modif !
 
     if anciennePos != nvlePos:
         # Colonne drop vers la droite
@@ -57,37 +58,12 @@ def reorderColumn(body):
         elif anciennePos > nvlePos:
             session.query(Colonnes).filter(anciennePos > Colonnes.pos, nvlePos <= Colonnes.pos).update({Colonnes.pos : Colonnes.pos + 1})
             session.commit()
-        # Enregistrer pos col déplacé
+
+        # Enregistrer nouvelle pos col
         session.query(Colonnes).filter(Colonnes.id == idColonne).update({"pos" : nvlePos})
         session.commit()
+        
         return "changed"
+    
     else:
         return "no change"
-
-
-# ----------Brouillon-----------------
-
-
-# @hug.put('/')
-# def modifyColumn(body):
-#     columnTitle = body['columnTitle']
-#     return columnTitle + " put"
-
-# @hug.get('/{column_id}')
-# def getColumn(column_id:int):
-#     return str(column_id) + " get"
-
-# @hug.get('/')
-# def getColumn():
-#     queryColonne = session.query(Colonnes).order_by(Colonnes.pos).with_entities(Colonnes.titreColonne)
-#     listeColonne = []
-#     for elt in queryColonne:
-#         for subelt in elt:
-#             listeColonne.append(subelt)
-#     print("=================>",listeColonne)
-#     return listeColonne
-
-# @hug.post('/')
-# def createColumn(body):
-#     columnTitle = body['columnTitle']
-#     return columnTitle + " post"
